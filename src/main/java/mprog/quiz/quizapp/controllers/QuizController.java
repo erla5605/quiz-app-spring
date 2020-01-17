@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import mprog.quiz.quizapp.domain.Quiz;
 import mprog.quiz.quizapp.exceptions.QuizNotFoundException;
 import mprog.quiz.quizapp.repositories.QuizRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,22 +22,23 @@ public class QuizController {
     }
 
     @GetMapping("quizzes")
-    public List<Quiz> getQuizzes(){
+    public ResponseEntity<List<Quiz>> getQuizzes(){
         log.debug("Get all quizzes");
-        return quizRepository.findAll();
+        return new ResponseEntity<>(quizRepository.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("quizzes/{id}")
-    public Quiz getQuizById(@PathVariable UUID id) throws QuizNotFoundException {
+    public ResponseEntity<Quiz> getQuizById(@PathVariable UUID id) throws QuizNotFoundException {
         log.debug("Get quiz by id");
 
-         return quizRepository.findById(id)
-                 .orElseThrow(() -> new QuizNotFoundException(id));
+         return new ResponseEntity<>(quizRepository.findById(id)
+                 .orElseThrow(() -> new QuizNotFoundException(id)), HttpStatus.OK
+         );
     }
 
     @PostMapping("quizzes")
-    public Quiz newQuiz(@RequestBody Quiz newQuiz) {
+    public ResponseEntity<Quiz> newQuiz(@RequestBody Quiz newQuiz) {
         log.debug("Post quiz");
-        return quizRepository.save(newQuiz);
+        return new ResponseEntity<>(quizRepository.save(newQuiz), HttpStatus.OK);
     }
 }
